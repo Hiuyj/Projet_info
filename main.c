@@ -9,7 +9,11 @@
 int main(int argc, char** argv)
 {
     SDL_Event event;
-    int niveau[nb_blc_ht][nb_blc_lg], open=1;
+    int niveau[nb_blc_ht][nb_blc_lg];
+    int open=1, i=0, j=0, play=0;
+    int startMoveMouse = 0;
+    int fps = 0;
+    Coordonees position_souris, position_fromage;
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -43,8 +47,9 @@ int main(int argc, char** argv)
     ren= SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 
-    Image menu;
-    menu=bo_img(ren,"menu.bmp",0,0);
+    Image menu, mouse;
+    menu=bo_img( ren, "menu.bmp", 0, 0, ht_fnt, lg_fnt);
+    mouse=bo_img( ren, "souris.bmp", 0, 0, tle_blc, tle_blc);
 
     SDL_RenderClear(ren);
     afficher(ren, menu);
@@ -52,42 +57,133 @@ int main(int argc, char** argv)
 
     while(open)
     {
-        SDL_WaitEvent(&event);
-        switch(event.type)
+        while(SDL_PollEvent(&event))
         {
-        case SDL_QUIT:
+
+            switch(event.type)
             {
-                open=0;
-            }
-            break;
-        case SDL_KEYDOWN:
-            {
-                switch( event.key.keysym.scancode )
+                case SDL_QUIT:
                 {
-                case SDL_SCANCODE_KP_1:
+                    open=0;
+                }
+                break;
+                case SDL_KEYDOWN:
+                {
+                    switch( event.key.keysym.scancode )
                     {
-                        affiche_lab( niveau, ren);
-                    }
-                    break;
-                default:
-                    {
-                        ;
+                        case SDL_SCANCODE_KP_1:
+                        {
+                            charger(niveau);//Pour charger un niveau
+                            affiche_lab( niveau, ren);
+
+                            reperer( niveau, &position_souris.x, &position_souris.y, SOURIS, &mouse);
+                            printf("\n %d et %d .\n", position_souris.x, position_souris.y);
+
+                        }
+                        break;
+                        case SDL_SCANCODE_KP_5:
+                        {
+                            reperer( niveau, &position_fromage.x, &position_fromage.y, OBJECTIF, &mouse);//On repere le fromage
+
+                            test( niveau, position_fromage.x, position_fromage.y);
+
+                            startMoveMouse = (startMoveMouse == 1) ? 0:1;
+                            /*
+                            printf("\n\n");
+                            for(i=0;i<nb_blc_ht;i++)
+                            {
+                                for(j=0;j<nb_blc_lg;j++)
+                                {
+                                    printf("%d ", niveau[i][j]);
+                                }
+                                printf("\n");
+                            }*/
+
+                            affiche_lab( niveau, ren);
+                        }
+                        break;
+                        case SDL_SCANCODE_KP_6 :
+                        {
+                            play=(play==1)?0:1;
+                        }
+                        break;
+                    default:
+                        {
+                            ;
+                        }
                     }
                 }
+                break;
+            default:
+                {
+                    ;
+                }
             }
-            break;
-        default:
-            {
-                ;
-            }
+
         }
+
+        /* Update */
+
+        SDL_Delay(17); // Pause 17 millisec ~ 60 FPS
+
+        fps++;
+        if (fps >= 15)
+        {
+            if (play)
+            {
+                reperer( niveau, &position_fromage.x, &position_fromage.y, OBJECTIF, &mouse);//On repere le fromage
+
+                test( niveau, position_fromage.x, position_fromage.y);
+
+                reperer( niveau, &position_souris.x, &position_souris.y, SOURIS, &mouse);//On repère la souris
+
+                printf("\n Oui\n");
+                deplacer_souris(niveau, position_souris.x, position_souris.y, &mouse);
+
+
+                /*afficher(ren, mouse);
+                SDL_RenderPresent(ren);*/
+
+                affiche_lab( niveau, ren);
+
+                //Reinitialisation du tableau
+                for(i=0;i<nb_blc_ht;i++)
+                {
+                    for(j=0;j<nb_blc_lg;j++)
+                    {
+                        if(niveau[i][j]==6)
+                        {
+                            niveau[i][j]=0;
+                        }
+                    }
+                    printf("\n");
+                }
+
+            }
+            fps = 0;
+        }
+
+
+
+        /* Render */
+
+
+        //SDL_RenderClear(renderer);
+
+        //afficherFond()
+
+        /*
+        if (state == game)
+        {
+            afficherSouris()
+        }
+        */
+
+
+
+        //SDL_RenderPresent(renderer);
+
     }
-
-
-
-    pause();
-    printf("fin pause\n");
-
 
 
 /*

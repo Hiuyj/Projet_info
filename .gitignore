@@ -1,0 +1,7 @@
+bin/*
+obj/*
+SDL2/*
+SDL2.dll
+*.depend
+*.layout
+Projet-Info.rar

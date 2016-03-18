@@ -6,16 +6,16 @@
 // Fonction pour connaitre le state actuel
 int STATES_getState();
 
-// Fonction pour gÃ©rer les Ã©vÃ¨nements en fonction du state actuel
+// Fonction pour gérer les évènements en fonction du state actuel
 void STATES_handleEvent(SDL_Event event, Context* context);
 
-// Fonction pour mettre Ã  jour en fonction du state actuel
+// Fonction pour mettre à jour en fonction du state actuel
 void STATES_update();
 
 // Fonction pour  dessiner en fonction du state actuel
 void STATES_render(SDL_Renderer* renderer);
 
-// Fonction pour aller d'un state Ã  l'autre
+// Fonction pour aller d'un state à l'autre
 void STATES_switch(int newState, Context* context);
 
 
